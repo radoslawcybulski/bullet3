@@ -134,8 +134,8 @@ public:
 
 	virtual void drawAabb(const btVector3& from, const btVector3& to, const btVector3& color)
 	{
-		btVector3 halfExtents = (to - from) * 0.5f;
-		btVector3 center = (to + from) * 0.5f;
+		btVector3 halfExtents = (to - from) * (btScalar)0.5;
+		btVector3 center = (to + from) * (btScalar)0.5;
 		int i, j;
 
 		btVector3 edgecoord(1.f, 1.f, 1.f), pa, pb;

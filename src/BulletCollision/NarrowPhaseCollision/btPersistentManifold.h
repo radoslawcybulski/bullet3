@@ -36,8 +36,10 @@ typedef bool (*ContactDestroyedCallback)(void* userPersistentData);
 typedef bool (*ContactProcessedCallback)(btManifoldPoint& cp, void* body0, void* body1);
 typedef void (*ContactStartedCallback)(btPersistentManifold* const& manifold);
 typedef void (*ContactEndedCallback)(btPersistentManifold* const& manifold);
+typedef void (*ContactUpdatedCallback)(btPersistentManifold* const& manifold);
 extern ContactDestroyedCallback gContactDestroyedCallback;
 extern ContactProcessedCallback gContactProcessedCallback;
+extern ContactUpdatedCallback gContactUpdatedCallback;
 extern ContactStartedCallback gContactStartedCallback;
 extern ContactEndedCallback gContactEndedCallback;
 #endif  //SWIG

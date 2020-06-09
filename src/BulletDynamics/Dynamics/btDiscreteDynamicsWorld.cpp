@@ -531,6 +531,15 @@ void btDiscreteDynamicsWorld::removeCollisionObject(btCollisionObject* collision
 void btDiscreteDynamicsWorld::removeRigidBody(btRigidBody* body)
 {
 	m_nonStaticRigidBodies.remove(body);
+	for (int i = 0; i < m_predictiveManifolds.size(); i++)
+	{
+		btPersistentManifold* manifold = m_predictiveManifolds[i];
+		if (manifold->getBody0() == body || manifold->getBody1() == body) {
+			this->m_dispatcher1->releaseManifold(manifold);
+			m_predictiveManifolds.removeAtIndex(i);
+			--i;
+		}		
+	}
 	btCollisionWorld::removeCollisionObject(body);
 }
 
@@ -987,6 +996,8 @@ void btDiscreteDynamicsWorld::integrateTransformsInternal(btRigidBody** bodies, 
 
 					StaticOnlyCallback sweepResults(body, body->getWorldTransform().getOrigin(), predictedTrans.getOrigin(), getBroadphase()->getOverlappingPairCache(), getDispatcher());
 #else
+					auto orig1 = body->getWorldTransform().getOrigin();
+					auto orig2 = predictedTrans.getOrigin();
 					btClosestNotMeConvexResultCallback sweepResults(body, body->getWorldTransform().getOrigin(), predictedTrans.getOrigin(), getBroadphase()->getOverlappingPairCache(), getDispatcher());
 #endif
 					//btConvexShape* convexShape = static_cast<btConvexShape*>(body->getCollisionShape());
@@ -1028,9 +1039,9 @@ void btDiscreteDynamicsWorld::integrateTransformsInternal(btRigidBody** bodies, 
 
 						//don't apply the collision response right now, it will happen next frame
 						//if you really need to, you can uncomment next 3 lines. Note that is uses zero restitution.
-						//btScalar appliedImpulse = 0.f;
-						//btScalar depth = 0.f;
-						//appliedImpulse = resolveSingleCollision(body,(btCollisionObject*)sweepResults.m_hitCollisionObject,sweepResults.m_hitPointWorld,sweepResults.m_hitNormalWorld,getSolverInfo(), depth);
+						btScalar appliedImpulse = 0.f;
+						btScalar depth = 0.f;
+						appliedImpulse = resolveSingleCollision(body,(btCollisionObject*)sweepResults.m_hitCollisionObject,sweepResults.m_hitPointWorld,sweepResults.m_hitNormalWorld,getSolverInfo(), depth);
 
 #endif
 
