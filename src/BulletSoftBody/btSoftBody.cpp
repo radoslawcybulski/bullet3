@@ -2332,6 +2332,12 @@ void btSoftBody::integrateMotion()
 {
 	/* Update			*/
 	updateNormals();
+
+	m_maxSpeedSquared = 0;
+	for (int j = 0; j < m_nodes.size(); ++j)
+	{
+		m_maxSpeedSquared = btMax(m_maxSpeedSquared, m_nodes[j].m_v.length2());
+	}
 }
 
 //
